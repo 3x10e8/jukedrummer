@@ -1,6 +1,17 @@
 # JukeDrummer
+## Updates
+These are the steps I followed to get the model weights provided in the original repo to work:
+1. (if using VS code) create a conda environment. I used Python 3.8 to stay close to library versions provided in [requirements.txt](requirements.txt)
+2. download model weight checkpoints from the Google Drive links in [get_ckpt.sh](./script/get_ckpt.sh). The `wget` commands may not work on some linux systems but directly downloading the files from Google Drive worked, use the same URLs as the `wget` calls.
+3. some variables and paths had to be edited from the original repo, hence this fork. See commit history for all changes made.
+4. copy some drumless WAV file to the ./input_drumless directory. Note that the models here expect a ~24s input as noted in the ISMIR paper. With some trial and error truncating your WAV to 23.78 seconds at 44.1kHz should work, see [truncate.py](./input_drumless/truncate_to_24s/truncate.py) 
+5. generating drum WAVs. Note, this generates solo drum tracks (each sample_iters corresponds to a separate track) -- these would have to be mereged again with the drumless WAV to hear the final render.
+```
+python inference.py --exp_idx=1 --cuda=0 --input_dir=input_drumless --output_dir=output_with_drums --sample_iters=10
+```
+6. [debug.py](./debug.py) could be used for stepping through the code in a python debugger.
 
-
+## Source Repo's readme.md:
 ### Demo video 
 [![Watch the video](https://img.youtube.com/vi/kfsN_46Rwq0/maxresdefault.jpg)](https://www.youtube.com/watch?v=kfsN_46Rwq0)
 

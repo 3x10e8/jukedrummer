@@ -65,16 +65,27 @@ if __name__ == '__main__':
 
     lm = JukeTransformer(hps).to(device)
     lm_ckpt = torch.load(os.path.join(hps.ckpt_dir, f'exp{exp_idx}.pkl'), map_location=lambda storage, loc: storage)
-    lm.load_state_dict(lm_ckpt['model'])
 
-    
+    try:
+        lm.load_state_dict(lm_ckpt['model'])
+    except RuntimeError as e:
+        print(e)
+        print('Updating key names...')
+        #print('Found keys:\n', lm_ckpt['model'].keys())    # correct key names
+        # https://discuss.pytorch.org/t/how-do-i-update-old-key-name-in-state-dict-to-new-version/76026/3
+        for key in ['bact_state_proj.w', 'bact_state_proj.b']:
+            lm_ckpt['model'][key.replace('bact', 'binfo')] = lm_ckpt['model'].pop(key)
+        # try again:
+        lm.load_state_dict(lm_ckpt['model'])
+        print('JukeBox loaded!')
+
     vocoder = HiFiVocoder(
-        ckpt_path=os.path.join(hps.ckpt_dir, 'hifigan/generator'), 
+        ckpt_path=os.path.join(hps.ckpt_dir, 'vocoder/generator'), 
         output_dir=output_dir, 
         device=device
     )
     
-    beat_extractor = BeatInfoExtractor(info_type=hps.binfo_type, device=device)
+    beat_extractor = BeatInfoExtractor(binfo_type=hps.binfo_type, device=device, input_csv_path='src/drumaware_hmmparams.csv')
     mel_extractor = Audio2Mel(MEL)
     
     dataset = End2EndWrapper(

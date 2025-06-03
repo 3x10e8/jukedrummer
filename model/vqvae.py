@@ -113,7 +113,9 @@ class Sampler(nn.Module):
 class VQVAE(nn.Module):
     def __init__(self, codebook_size, encoder=None, decoder=None, device=None):
         super().__init__()
-        self.vq = BottleneckBlock(codebook_size, 64, 0.99, device)
+        self.vq = BottleneckBlock(codebook_size, 64, 0.99) #, device) 
+        # BottleneckBlock takes inputs: (self, k_bins, emb_width, mu)
+        # see https://github.com/legoodmanner/jukedrummer/issues/4#issuecomment-2858179567
         self.encoder = encoder 
         self.decoder = decoder 
 

@@ -5,6 +5,11 @@ import math
 from fast_transformers.transformers import *
 import numpy as np
 
+# add jukebox module to path
+import sys
+sys.path.append('/local_disk/abhinav/jukedrummer/jukebox')
+sys.path.append('/local_disk/abhinav/jukedrummer/ckpt')
+
 from jukebox.transformer.ops import Conv1D
 from model.autoregressive import ConditionalAutoregressive2D
 

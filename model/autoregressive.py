@@ -164,7 +164,7 @@ class ConditionalAutoregressive2D(nn.Module):
         x = self.x_emb_dropout(x)
         x = self.x_data_dropout(x.unsqueeze(2)).squeeze(2) + self.pos_emb_dropout(self.pos_emb()) + x_cond # Pos emb + dropout + x_cond
 
-        x = self.transformer(x, encoder_kv=encoder_kv, fp16=fp16, cond=None) # Transformer
+        x = self.transformer(x, encoder_kv=encoder_kv, fp16=fp16) #cond=None) # Transformer
         if self.add_cond_after_transformer: # Piped doesnt add x_cond
             x = x + x_cond
 
@@ -243,7 +243,7 @@ class ConditionalAutoregressive2D(nn.Module):
             for sample_t in range(0, sample_tokens):
                 x, cond = self.get_emb(sample_t, n_samples, x, x_cond, y_cond)
                 self.transformer.check_cache(n_samples, sample_t, fp16)
-                x = self.transformer(x, encoder_kv=encoder_kv, sample=True, fp16=fp16, cond=None) # Transformer
+                x = self.transformer(x, encoder_kv=encoder_kv, sample=True, fp16=fp16) #, cond=None) # Transformer
                 if self.add_cond_after_transformer:
                     x = x + cond
                 assert x.shape == (n_samples, 1, self.width), x.shape
