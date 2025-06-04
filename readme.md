@@ -1,6 +1,8 @@
 # JukeDrummer
 ## Updates
-These are the steps I followed to get the model weights provided in the original repo to work:
+For training JukeDrummer model using your own datasets, see [recipe.ipynb](./recipe.ipynb)
+
+For using pre-trained JukeDrummer weights, these are the steps I followed to get the model weights provided in the original repo to work:
 1. (if using VS code) create a conda environment. I used Python 3.8 to stay close to library versions provided in [requirements.txt](requirements.txt)
 2. download model weight checkpoints from the Google Drive links in [get_ckpt.sh](./script/get_ckpt.sh). The `wget` commands may not work on some linux systems but directly downloading the files from Google Drive worked, use the same URLs as the `wget` calls.
 3. some variables and paths had to be edited from the original repo, hence this fork. See commit history for all changes made.
@@ -9,7 +11,7 @@ These are the steps I followed to get the model weights provided in the original
 ```
 python inference.py --exp_idx=1 --cuda=0 --input_dir=input_drumless --output_dir=output_with_drums --sample_iters=10
 ```
-6. [debug.py](./debug.py) could be used for stepping through the code in a python debugger.
+- [debug.py](./debug.py) could be used for stepping through the code in a python debugger.
 
 ## Source Repo's readme.md:
 ### Demo video 
