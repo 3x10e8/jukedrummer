@@ -25,14 +25,14 @@ class Hyperparams(dict):
 LM_DEFAULTS = Hyperparams(
     batch_size=16,
     sample_step=10,
-    ckpt_dir='ckpt/',
+    ckpt_dir='ckpt_3x10e8/',
     path='data/',
 )
 
 VQ_DEFAULTS = Hyperparams(
     batch_size=32,
     sample_step=50,
-    ckpt_dir='ckpt/',
+    ckpt_dir='ckpt_3x10e8/',
     path='data/',
 )
 

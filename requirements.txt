@@ -26,3 +26,7 @@ torchvision==0.15.1 # for compatibility with torch==2.0.0
 tqdm==4.60.0
 pytorch-fast-transformers==0.4.0 # was missing?
 einops==0.6.1
+# for training:
+av==12.3.0 
+unidecode==1.4.0
+wandb==0.19.11

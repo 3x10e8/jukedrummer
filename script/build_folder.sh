@@ -32,7 +32,7 @@ make_target_others(){
 
 mkdir -p data/audio data/segment_audio data/beats data/mel data/token
 mkdir -p ckpt/vocoder ckpt/beat_tracker
-mkdir data/token/low data/token/mid data/token/high
+mkdir data/beats/low data/beats/mid data/beats/high
 make_target_others data/audio
 make_target_others data/segment_audio
 make_target_others data/mel

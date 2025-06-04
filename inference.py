@@ -25,6 +25,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp_idx', type=int, help='Determine which experiment id of models is used to sample')
     parser.add_argument('--cuda', type=int, help='cuda id')
+    parser.add_argument('--ckpt_dir', type=str, default='ckpt/')
     parser.add_argument('--input_dir', type=str, default='input/')
     parser.add_argument('--output_dir', type=str, default='output/')
     parser.add_argument('--sample_iters', type=int, default=10)
@@ -34,7 +35,7 @@ if __name__ == '__main__':
 
     # Parameters Initialization
     exp_idx = args.exp_idx
-    output_dir = os.path.join(args.output_dir, f'exp{exp_idx}')
+    output_dir = os.path.join(args.output_dir, f'{os.path.dirname(args.ckpt_dir)}_exp{exp_idx}')
     hps = setup_lm_hparams(MODEL_LIST[exp_idx])
     hps.cuda = args.cuda
     hps.batch_size = 1
@@ -46,25 +47,25 @@ if __name__ == '__main__':
     print(f'save generated samples to {args.output_dir}')
 
     os.makedirs(output_dir, exist_ok=True)
-    device = torch.device(f'cuda:{hps.cuda}')
+    device = torch.device(f'cuda:{args.cuda}')
     
     # Model Initialization 
     target_vqvae, _, target_mean, target_std = get_vqvae(
         vq_idx=hps.vq_name.strip('vq'),
         data_type='target', 
-        ckpt_dir=hps.ckpt_dir, 
+        ckpt_dir=args.ckpt_dir, 
         device = device
     )
 
     others_vqvae, _, others_mean, others_std = get_vqvae(
         vq_idx=hps.vq_name.strip('vq'),
         data_type='others', 
-        ckpt_dir=hps.ckpt_dir, 
+        ckpt_dir=args.ckpt_dir, 
         device = device
     )
 
     lm = JukeTransformer(hps).to(device)
-    lm_ckpt = torch.load(os.path.join(hps.ckpt_dir, f'exp{exp_idx}.pkl'), map_location=lambda storage, loc: storage)
+    lm_ckpt = torch.load(os.path.join(args.ckpt_dir, f'exp{exp_idx}.pkl'), map_location=lambda storage, loc: storage)
 
     try:
         lm.load_state_dict(lm_ckpt['model'])
@@ -80,7 +81,7 @@ if __name__ == '__main__':
         print('JukeBox loaded!')
 
     vocoder = HiFiVocoder(
-        ckpt_path=os.path.join(hps.ckpt_dir, 'vocoder/generator'), 
+        ckpt_path=os.path.join(args.ckpt_dir, 'vocoder/generator'), 
         output_dir=output_dir, 
         device=device
     )

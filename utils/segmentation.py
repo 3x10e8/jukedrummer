@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import pickle
-import ffmpeg
+#import ffmpeg # unused?
 import librosa
 from tqdm import tqdm
 import soundfile as sf
@@ -15,9 +15,9 @@ def pad_to(audio, length):
         return audio
     return np.pad(audio, (0,length - len(audio)), 'constant', constant_values=0)
 
-def get_downbeats(fn, beat_proc, track_proc, root):
-    drums, sr = librosa.load(os.path.join(root, 'audio', 'target', fn), 44100)
-    others, sr = librosa.load(os.path.join(root, 'audio', 'others', fn), 44100)
+def get_downbeats(fn, beat_proc, track_proc, audio_dir):
+    drums, sr = librosa.load(os.path.join(audio_dir, 'target', fn), 44100)
+    others, sr = librosa.load(os.path.join(audio_dir, 'others', fn), 44100)
     drums = pad_to(drums, max(len(drums), len(others)))
     others = pad_to(others, max(len(drums), len(others)))
     act = beat_proc(others+drums)
@@ -25,8 +25,9 @@ def get_downbeats(fn, beat_proc, track_proc, root):
     return downbeats
 
 def segmentation(fn, downbeats, length, audio_dir):
-    others, sr = librosa.load(os.path.join(audio_dir,'audio', 'others', fn), sr=44100)
-    drums, sr = librosa.load(os.path.join(audio_dir,'audio', 'target', fn), sr=44100)
+    root = os.sep.join(audio_dir.split(os.sep)[:-1]) # everything except audio
+    others, sr = librosa.load(os.path.join(audio_dir, 'others', fn), sr=44100)
+    drums, sr = librosa.load(os.path.join(audio_dir, 'target', fn), sr=44100)
     if not len(others) == len(drums):
         to_pad = max(len(others), len(drums)) 
         others = pad_to(others, to_pad)
@@ -35,8 +36,8 @@ def segmentation(fn, downbeats, length, audio_dir):
         while(count*length+length < len(others)):
             others_s = others[count*length:count*length+length]
             drums_s = drums[count*length:count*length+length]
-            sf.write(os.path.join(audio_dir, 'segment_audio', 'others',  f'{fn.split(".")[0]}_{count}.wav'), others_s, 44100)
-            sf.write(os.path.join(audio_dir, 'segment_audio', 'target',  f'{fn.split(".")[0]}_{count}.wav'), drums_s, 44100)
+            sf.write(os.path.join(root, 'segment_audio', 'others',  f'{fn.split(".")[0]}_{count}.wav'), others_s, 44100)
+            sf.write(os.path.join(root, 'segment_audio', 'target',  f'{fn.split(".")[0]}_{count}.wav'), drums_s, 44100)
             count += 1
     else:
         start = downbeats.pop(0)
@@ -47,12 +48,12 @@ def segmentation(fn, downbeats, length, audio_dir):
                 start = round(start * 44100 )
                 drums_s = drums[start:start+length]
                 others_s = others[start:start+length]
-                sf.write(os.path.join(audio_dir, 'segment_audio', 'others',  f'{fn.split(".")[0]}_{count}.wav'), others_s, 44100)
-                sf.write(os.path.join(audio_dir, 'segment_audio', 'target',  f'{fn.split(".")[0]}_{count}.wav'), drums_s, 44100)
+                sf.write(os.path.join(root, 'segment_audio', 'others',  f'{fn.split(".")[0]}_{count}.wav'), others_s, 44100)
+                sf.write(os.path.join(root, 'segment_audio', 'target',  f'{fn.split(".")[0]}_{count}.wav'), drums_s, 44100)
                 start = cur
                 count += 1
 
-def inference(fns, seg_by_downbeats, length):
+def inference(fns, seg_by_downbeats, length, audio_dir):
     print('step 1: data segment')
     if seg_by_downbeats:
         beat_proc = RNNDownBeatProcessor()

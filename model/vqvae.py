@@ -3,7 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import os
 import numpy as np
-
+import sys
+sys.path.append('jukebox')
 from einops.layers.torch import Rearrange
 from jukebox.vqvae.bottleneck import BottleneckBlock
 

@@ -3,7 +3,8 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-
+import sys
+sys.path.append('jukebox')
 import argparse
 import pickle
 from jukebox.make_models import MODELS

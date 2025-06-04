@@ -68,7 +68,7 @@ def process_audios(fn, mel_dir, audio_dir, data_type, sample_rate, extract_func)
         mel = mel.numpy()[0].astype(np.float32)
         if np.any(np.isnan(mel)) or np.sum(np.mean(mel, axis=0, keepdims=False) < -8) > mel.shape[1] // 2:
             return id, 0
-        np.save(os.path.join(mel_dir, fn.replace('wav', 'npy')), mel, allow_pickle=False)
+        np.save(os.path.join(mel_dir, data_type, fn.replace('wav', 'npy')), mel, allow_pickle=False)
     except:
         print('error occur')
         return id, 0

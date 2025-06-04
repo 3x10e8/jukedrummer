@@ -3,6 +3,8 @@ import torch.nn as nn
 import os
 from tqdm import tqdm 
 from torchvision.utils import make_grid
+import sys
+sys.path.append('jukebox')
 
 from dataset import *
 from model.vqvae import VQVAE, Sampler
@@ -92,7 +94,7 @@ if is_wandb:
         name=f'{hps.name} {args.data_type}',
     )
 
-### TRAINNING 
+### TRAINING 
 mean, std = mean.to(device), std.to(device)
 for epoch in range(1000 + 1):
     model.train()

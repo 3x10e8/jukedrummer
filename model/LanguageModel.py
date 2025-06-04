@@ -7,8 +7,8 @@ import numpy as np
 
 # add jukebox module to path
 import sys
-sys.path.append('/local_disk/abhinav/jukedrummer/jukebox')
-sys.path.append('/local_disk/abhinav/jukedrummer/ckpt')
+sys.path.append('jukebox')
+sys.path.append('ckpt')
 
 from jukebox.transformer.ops import Conv1D
 from model.autoregressive import ConditionalAutoregressive2D
